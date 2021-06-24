@@ -4,7 +4,7 @@ from flask_restful import Resource
 from core.application.services import TerraformModuleService
 
 
-class TerraformModulesView(Resource):
+class TerraformModuleTemplatesView(Resource):
     def __init__(self, service: TerraformModuleService):
         self.service = service
 
@@ -14,9 +14,9 @@ class TerraformModulesView(Resource):
         })
 
 
-class TerraformModuleView(Resource):
+class TerraformModuleTemplateView(Resource):
     def __init__(self, service: TerraformModuleService):
         self.service = service
 
     def get(self, name):
-        return self.service.get(name)
+        return jsonify(self.service.get(name))

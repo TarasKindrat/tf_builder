@@ -9,7 +9,7 @@ class BaseGitRepository(object):
         self.pull()
         return self
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self):
         pass
 
     def __clone__(self, repo_url, repo_path, user_name, password):

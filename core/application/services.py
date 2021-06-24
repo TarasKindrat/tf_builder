@@ -1,5 +1,7 @@
-import jinja2schema
+import dataclasses
+import json
 
+from core.domain.entities.terraform_module_template import TerraformModuleTemplateEntity
 from core.domain.repositories.terraform_module_template_repo import BaseTerraformModuleTemplateRepository
 
 
@@ -15,22 +17,23 @@ class TerraformModuleService(BaseService):
         return sorted(self.repo.list())
 
     def get(self, name):
-        template = self.repo.get(name)
-        variables = {}
-        jinja_variables = vars(jinja2schema.infer(template))
-        if jinja_variables.get('data'):
-            variables = self.repo.get_variables(name)
-        return {
-            "name": name,
-            "template": template,
-            "variables": variables,
-        }
+        return dataclasses.asdict(self.repo.get(name))
 
-    def create(self, name, content):
-        return self.repo.create(name, content)
+    def create(self, name, content, variables):
+        terraform_template_entity = TerraformModuleTemplateEntity().load({
+            "name": name,
+            "template": content,
+            "variables": json.loads(variables),
+        })
+        return dataclasses.asdict(self.repo.create(terraform_template_entity))
 
     def delete(self, name):
         return self.repo.delete(name)
 
-    def update(self, name, content):
-        return self.repo.update(name, content)
+    def update(self, name, content, variables):
+        terraform_template_entity = TerraformModuleTemplateEntity().load({
+            "name": name,
+            "template": content,
+            "variables": json.loads(variables),
+        })
+        return dataclasses.asdict(self.repo.update(terraform_template_entity))

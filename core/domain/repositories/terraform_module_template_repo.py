@@ -1,5 +1,7 @@
 from abc import abstractmethod
 
+from core.domain.entities.terraform_module_template import TerraformModuleTemplateEntity
+
 
 class BaseTerraformModuleTemplateRepository(object):
     @abstractmethod
@@ -18,28 +20,18 @@ class BaseTerraformModuleTemplateRepository(object):
         raise NotImplementedError
 
     @abstractmethod
-    def get_variables(self, name):
-        """ Get Terraform module expected variables
-        :param name: module name
-        :return: str
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def create(self, name, content):
+    def create(self, terraform_template_entity: TerraformModuleTemplateEntity):
         """Create new terraform module template
-        :param name: str module name
-        :param content: str jinja2 template
-        :return: str
+        :param terraform_template_entity: TerraformModuleTemplateEntity
+        :return: TerraformModuleTemplateEntity
         """
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, name, content):
+    def update(self, terraform_template_entity: TerraformModuleTemplateEntity):
         """Update existing terraform module template
-        :param name: module name
-        :param content: content
-        :return: str
+        :param terraform_template_entity: TerraformModuleTemplateEntity
+        :return: TerraformModuleTemplateEntity
         """
         raise NotImplementedError
 

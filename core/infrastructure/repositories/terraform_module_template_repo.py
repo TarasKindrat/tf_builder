@@ -1,8 +1,8 @@
 import json
 import os
-from abc import abstractmethod
 
-from core.domain.entities.exception import TemplateNotFoundException
+from core.domain.entities.exception import TemplateNotFoundException, TemplateAlreadyExistException
+from core.domain.entities.terraform_module_template import TerraformModuleTemplateEntity
 from core.domain.repositories.terraform_module_template_repo import BaseTerraformModuleTemplateRepository
 from core.domain.repositories.git_repo import BaseGitRepository
 
@@ -28,13 +28,10 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
                 with open(file_path) as f:
                     return f.read()
 
-    def get_variables(self, name):
+    def create(self, terraform_template_entity):
         pass
 
-    def create(self, name, content):
-        pass
-
-    def update(self, name, content):
+    def update(self, terraform_template_entity):
         pass
 
     def delete(self, name):
@@ -42,19 +39,16 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
 
 
 class DatabaseTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository):
-    def get_variables(self, name):
-        pass
-
     def list(self):
         pass
 
     def get(self, name):
         pass
 
-    def create(self, name, content):
+    def create(self, terraform_template_entity):
         pass
 
-    def update(self, name, content):
+    def update(self, terraform_template_entity):
         pass
 
     def delete(self, name):
@@ -62,8 +56,6 @@ class DatabaseTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepos
 
 
 class StorageTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository):
-    def get_variables(self, name):
-        pass
 
     def list(self):
         pass
@@ -71,10 +63,10 @@ class StorageTerraformModuleTemplateRepository(BaseTerraformModuleTemplateReposi
     def get(self, name):
         pass
 
-    def create(self, name, content):
+    def create(self, terraform_template_entity):
         pass
 
-    def update(self, name, content):
+    def update(self, terraform_template_entity):
         pass
 
     def delete(self, name):
@@ -100,24 +92,46 @@ class LocalTerraformModuleTemplateRepository(BaseTerraformModuleTemplateReposito
         else:
             file_path = os.path.join(self.templates_path, f'{name}.jinja2')
             template = LocalTerraformModuleTemplateRepository.read_file(file_path)
-            return template
+            variables = self.__get_variables__(name)
+            return TerraformModuleTemplateEntity().load({
+                'name': name,
+                'template': template,
+                'variables': variables
+            })
 
-    def get_variables(self, name):
-        templates = os.listdir(self.templates_path)
-        if not name in [template.split('.')[0] for template in templates]:
-            raise TemplateNotFoundException()
+    def create(self, terraform_template_entity):
+        template_path = os.path.join(self.templates_path, f'{terraform_template_entity.name}.jinja2')
+        template_vars_path = os.path.join(self.templates_vars_path, f'{terraform_template_entity.name}.json')
+        if os.path.exists(template_path):
+            raise TemplateAlreadyExistException(terraform_template_entity.name)
+        with open(template_path, 'w') as f:
+            f.write(terraform_template_entity.template)
+        with open(template_vars_path, 'w') as f:
+            f.write(json.dumps(terraform_template_entity.variables))
+        return self.get(terraform_template_entity.name)
+
+    def update(self, terraform_template_entity):
+        template_path = os.path.join(self.templates_path, f'{terraform_template_entity.name}.jinja2')
+        template_vars_path = os.path.join(self.templates_vars_path, f'{terraform_template_entity.name}.json')
+        if not os.path.exists(template_path):
+            raise TemplateNotFoundException(terraform_template_entity.name)
+        with open(template_path, 'w') as f:
+            f.write(terraform_template_entity.template)
+        with open(template_vars_path, 'w') as f:
+            f.write(json.dumps(terraform_template_entity.variables))
+        return self.get(terraform_template_entity.name)
+
+    def delete(self, name):
+        os.remove(os.path.join(self.templates_path, f'{name}.jinja2'))
+        return f"{name} has been deleted"
+
+    def __get_variables__(self, name):
+        templates = os.listdir(self.templates_vars_path)
+        if name not in [template.split('.')[0] for template in templates]:
+            return {}
         else:
             vars_file_path = os.path.join(self.templates_vars_path, f'{name}.json')
             return json.loads(LocalTerraformModuleTemplateRepository.read_file(vars_file_path))
-
-    def create(self, name, content):
-        pass
-
-    def update(self, name, content):
-        pass
-
-    def delete(self, name):
-        pass
 
     @staticmethod
     def read_file(path):

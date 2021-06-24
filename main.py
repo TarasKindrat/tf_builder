@@ -9,14 +9,16 @@ from core.infrastructure.repositories.terraform_module_template_repo import Loca
 def run():
     local_terraform_module_repository = LocalTerraformModuleTemplateRepository()
     service = TerraformModuleService(local_terraform_module_repository)
+
+    parser = ArgumentParser(description='Terraform builder')
     runners = {
-        'cli': CLIApiRunner(service),
+        'cli': CLIApiRunner(parser, service),
         'rest': RestAPIRunner(service),
     }
 
-    parser = ArgumentParser(description='Terraform builder')
     parser.add_argument('command', help='Cli interface', choices=runners.keys())
     args = parser.parse_known_args()[0]
+
     runners.get(args.command).run()
 
 
