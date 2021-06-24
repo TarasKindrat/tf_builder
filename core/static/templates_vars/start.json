@@ -1,0 +1,14 @@
+{
+  "project": {
+    "type": "str",
+    "help": "Project id"
+  },
+  "region": {
+    "type": "str",
+    "help": "Project region"
+  },
+  "zone": {
+    "type": "str",
+    "help": "Project zone"
+  }
+}

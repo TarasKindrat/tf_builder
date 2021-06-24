@@ -1,0 +1,7 @@
+marshmallow~=3.12.1
+flask
+requests
+flask-classful
+flask-restful
+GitPython
+jinja2schema
