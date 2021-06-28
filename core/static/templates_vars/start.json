@@ -1,5 +1,5 @@
 {
-  "project": {
+  "project_id": {
     "type": "str",
     "required": true,
     "help": "Project id"

@@ -55,7 +55,7 @@ class TerraformModuleTemplateEntity(BaseEntity):
     name = fields.String(required=True)
     template = fields.String(required=True)
     variables = DictField(
-        fields.Str(validate=validate.Regexp(r'^[a-zA-Z]+$')),
+        fields.Str(validate=validate.Regexp(r'^[a-zA-Z_]+$')),
         fields.Nested(TerraformTemplateVariableEntity),
         default={}, missing={}
     )

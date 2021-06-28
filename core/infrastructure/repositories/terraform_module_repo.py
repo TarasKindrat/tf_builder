@@ -1,8 +1,8 @@
 from core.domain.repositories.terraform_module_repo import BaseTerraformModuleRepository
 
 
-class TerraformModuleRepository(BaseTerraformModuleRepository):
-    def get(self, name):
+class LocalTerraformModuleRepository(BaseTerraformModuleRepository):
+    def get(self, name, variables):
         pass
 
     def create(self, name, variables):

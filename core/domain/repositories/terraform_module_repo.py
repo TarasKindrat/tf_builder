@@ -3,9 +3,10 @@ from abc import abstractmethod
 
 class BaseTerraformModuleRepository(object):
     @abstractmethod
-    def get(self, name):
+    def get(self, name, variables):
         """ Get Terraform module
         :param name: module name
+        :param variables: dict
         :return: str
         """
         raise NotImplementedError
