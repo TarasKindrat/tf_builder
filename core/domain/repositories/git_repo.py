@@ -5,7 +5,6 @@ class BaseGitRepository(object):
         self.user_name = user_name
         self.password = password
 
-
     def __enter__(self):
         self.pull()
         return self
@@ -19,17 +18,17 @@ class BaseGitRepository(object):
     def pull(self):
         raise NotImplementedError
 
-    def add(self):
+    def add(self, file):
         raise NotImplementedError
 
-    def commit(self):
+    def commit(self, message):
         raise NotImplementedError
 
     def push(self):
         raise NotImplementedError
 
-    def branch(self):
+    def branch(self, branch_name):
         raise NotImplementedError
 
-    def checkout(self):
+    def checkout(self, branch_name):
         raise NotImplementedError

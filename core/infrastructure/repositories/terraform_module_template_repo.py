@@ -13,7 +13,7 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
         super(GitTerraformModuleTemplateRepository, self).__init__(*args, **kwargs)
         self.git = git_repository
         self.templates_path = os.path.join(self.git.local_repo_path, templates_path)
-        self.templates_vars_path = os.path.join(self.git.local_repo_path,templates_path)
+        self.templates_vars_path = os.path.join(self.git.local_repo_path, templates_path)
 
     def list(self):
         with self.git:
@@ -45,7 +45,6 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
             self.git.commit(f'add {template_vars_path} to the git')
             self.git.push()
         return self.get(terraform_template_entity.name)
-
 
     def update(self, terraform_template_entity):
         with self.git:
