@@ -29,10 +29,39 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
                     return f.read()
 
     def create(self, terraform_template_entity):
-        pass
+        with self.git:
+            template_path = os.path.join(self.templates_path, f'{terraform_template_entity.name}.jinja2')
+            template_vars_path = os.path.join(self.templates_vars_path, f'{terraform_template_entity.name}.json')
+            if os.path.exists(template_path):
+                raise TemplateAlreadyExistException(terraform_template_entity.name)
+            with open(template_path, 'w') as f:
+                f.write(terraform_template_entity.template)
+                self.git.add(f)
+                self.git.commit(f'add {f}.json to the git')
+            with open(template_vars_path, 'w') as f:
+                f.write(json.dumps(terraform_template_entity.variables))
+                self.git.add(f)
+                self.git.commit(f'add {f}.json to the git')
+            self.git.push()
+        return self.get(terraform_template_entity.name)
+
 
     def update(self, terraform_template_entity):
-        pass
+        with self.git:
+            template_path = os.path.join(self.templates_path, f'{terraform_template_entity.name}.jinja2')
+            template_vars_path = os.path.join(self.templates_vars_path, f'{terraform_template_entity.name}.json')
+            if not os.path.exists(template_path):
+                raise TemplateNotFoundException(terraform_template_entity.name)
+            with open(template_path, 'w') as f:
+                f.write(terraform_template_entity.template)
+                self.git.add(f)
+                self.git.commit(f'add {f}.json to the git')
+            with open(template_vars_path, 'w') as f:
+                f.write(json.dumps(terraform_template_entity.variables))
+                self.git.add(f)
+                self.git.commit(f'add {f}.json to the git')
+            self.git.push()
+        return self.get(terraform_template_entity.name)
 
     def delete(self, name):
         pass

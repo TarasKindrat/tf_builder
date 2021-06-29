@@ -23,14 +23,19 @@ class GitRepository(BaseGitRepository):
         o = self.git.remotes.origin
         o.pull()
 
-    def commit(self):
-        pass
+    def add(self, file):
+        self.git.index.add([file])
+
+
+    def commit(self, message):
+        self.git.index.commit(message)
 
     def push(self):
+        o = self.git.remotes.origin
+        o.push()
+
+    def branch(self, branch):
         pass
 
-    def branch(self):
-        pass
-
-    def checkout(self):
+    def checkout(self, branch):
         pass
