@@ -1,13 +1,1 @@
-# Run
-
-## Cli interface
-
-```tf_builder cli```
-
-### Get templates list
-
-```tf_builder cli --list```
-
-### Get template
-
-```tf_builder cli --get start```
+[![Maintainability](https://api.codeclimate.com/v1/badges/2270e9542f8d3ce871a5/maintainability)](https://codeclimate.com/github/bohdana-kuzmenko/tf_builder/maintainability)
