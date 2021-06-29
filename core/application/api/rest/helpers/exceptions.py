@@ -9,8 +9,8 @@ from core.domain.entities.exception import TemplateNotFoundException, TemplateAl
 
 API_ERRORS_DICT = {
     marshmallow.exceptions.ValidationError: ("Incorrect data in json: {}", HTTPStatus.BAD_REQUEST),
-    TemplateNotFoundException: ("Instance {} has not been found", HTTPStatus.NOT_FOUND),
-    TemplateAlreadyExistException: ("Instance {} has not been found", HTTPStatus.BAD_REQUEST),
+    TemplateNotFoundException: ("Template {} has not been found", HTTPStatus.NOT_FOUND),
+    TemplateAlreadyExistException: ("Template {} already exists", HTTPStatus.BAD_REQUEST),
 }
 
 

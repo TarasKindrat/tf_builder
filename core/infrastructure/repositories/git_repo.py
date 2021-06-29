@@ -23,6 +23,9 @@ class GitRepository(BaseGitRepository):
         o = self.git.remotes.origin
         o.pull()
 
+    def add(self):
+        pass
+
     def commit(self):
         pass
 
