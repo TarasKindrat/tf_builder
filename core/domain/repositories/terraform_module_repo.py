@@ -12,10 +12,9 @@ class BaseTerraformModuleRepository(object):
         raise NotImplementedError
 
     @abstractmethod
-    def create(self, name, variables):
+    def create(self, modules, terraform_template_service):
         """Create new terraform module
-        :param name: str module name
-        :param variables: dict
+        :param modules: list  of dict
         :return: str
         """
         raise NotImplementedError

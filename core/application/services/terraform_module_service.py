@@ -19,23 +19,7 @@ class TerraformModuleService(BaseService):
         pass
 
     def create(self, modules):
-        result = []
-        for module in modules:
-            tf_module = TerraformModuleEntity().load(module)
-            template = self.terraform_template_service.get(tf_module.name)
-            mapping = {
-                "str": fields.String,
-                "string": fields.String,
-                "bool": fields.Boolean,
-                "int": fields.Integer
-            }
-            variables = {k: mapping.get(v.get('type'))(required=v.get('required'))
-                         for k, v in template.get('variables').items()}
-            clz = type("TemplateVariables", (BaseEntity,), variables)
-            clz().load(tf_module.variables)
-            jinja_tpl = Environment(loader=BaseLoader).from_string(template.get('template'))
-            result.append(jinja_tpl.render(tf_module.variables))
-        return '\n\n'.join(result)
+        return self.repo.create(modules, self.terraform_template_service)
 
     def delete(self, name):
         pass
