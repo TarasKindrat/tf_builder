@@ -6,12 +6,19 @@ from core.application.services.terraform_module_service import TerraformModuleSe
 from core.application.services.terraform_module_template_service import TerraformModuleTemplateService
 from core.infrastructure.repositories.terraform_module_repo import LocalTerraformModuleRepository
 from core.infrastructure.repositories.terraform_module_template_repo import LocalTerraformModuleTemplateRepository
+from core.infrastructure.repositories.terraform_module_template_repo import GitTerraformModuleTemplateRepository
+from core.infrastructure.repositories.git_repo import GitRepository
 
 
 def run():
-    local_terraform_module_template_repository = LocalTerraformModuleTemplateRepository()
-    local_terraform_module_repository = LocalTerraformModuleRepository()
+    url = "https://github.com/BohdanaKuzmenko/tf_tmp_repo.git"
+    repo = GitRepository(f"/Users/zhhuta/PycharmProjects/{url.split('/')[-1].split('.')[0]}",
+                         "usr", "passw", url)
+    local_terraform_module_template_repository = GitTerraformModuleTemplateRepository(repo,
+                                                 'static/templates')
     template_service = TerraformModuleTemplateService(local_terraform_module_template_repository)
+
+    local_terraform_module_repository = LocalTerraformModuleRepository()
     module_service = TerraformModuleService(local_terraform_module_repository, template_service)
 
     parser = ArgumentParser(description='Terraform builder')

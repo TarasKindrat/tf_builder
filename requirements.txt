@@ -5,3 +5,4 @@ flask-classful
 flask-restful
 GitPython
 jinja2schema
+jinja2

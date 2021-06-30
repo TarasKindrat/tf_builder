@@ -13,6 +13,7 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
         super(GitTerraformModuleTemplateRepository, self).__init__(*args, **kwargs)
         self.git = git_repository
         self.templates_path = os.path.join(self.git.local_repo_path, templates_path)
+        self.templates_vars_path = os.path.join(self.git.local_repo_path, templates_path)
 
     def list(self):
         with self.git:
@@ -29,10 +30,38 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
                     return f.read()
 
     def create(self, terraform_template_entity):
-        pass
+        with self.git:
+            template_path = os.path.join(self.templates_path, f'{terraform_template_entity.name}.jinja2')
+            template_vars_path = os.path.join(self.templates_vars_path, f'{terraform_template_entity.name}.json')
+            if os.path.exists(template_path):
+                raise TemplateAlreadyExistException(terraform_template_entity.name)
+            with open(template_path, 'w') as f:
+                f.write(terraform_template_entity.template)
+            self.git.add(template_path)
+            self.git.commit(f'add {template_path} to the git')
+            with open(template_vars_path, 'w') as f:
+                f.write(json.dumps(terraform_template_entity.variables))
+            self.git.add(template_vars_path)
+            self.git.commit(f'add {template_vars_path} to the git')
+            self.git.push()
+        return self.get(terraform_template_entity.name)
 
     def update(self, terraform_template_entity):
-        pass
+        with self.git:
+            template_path = os.path.join(self.templates_path, f'{terraform_template_entity.name}.jinja2')
+            template_vars_path = os.path.join(self.templates_vars_path, f'{terraform_template_entity.name}.json')
+            if not os.path.exists(template_path):
+                raise TemplateNotFoundException(terraform_template_entity.name)
+            with open(template_path, 'w') as f:
+                f.write(terraform_template_entity.template)
+            self.git.add(template_path)
+            self.git.commit(f'add {template_path} to the git')
+            with open(template_vars_path, 'w') as f:
+                f.write(json.dumps(terraform_template_entity.variables))
+            self.git.add(template_vars_path)
+            self.git.commit(f'add {template_vars_path} to the git')
+            self.git.push()
+        return self.get(terraform_template_entity.name)
 
     def delete(self, name):
         pass
@@ -122,6 +151,7 @@ class LocalTerraformModuleTemplateRepository(BaseTerraformModuleTemplateReposito
         return self.get(terraform_template_entity.name)
 
     def delete(self, name):
+        #TODO check if file exisis and only then delete
         os.remove(os.path.join(self.templates_path, f'{name}.jinja2'))
         return f"{name} has been deleted"
 
