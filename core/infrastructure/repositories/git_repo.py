@@ -34,7 +34,16 @@ class GitRepository(BaseGitRepository):
         o.push()
 
     def branch(self, branch_name):
-        pass
+        """
+        Create a new branch
+        str: branch_name
+        """
+        self.git.branch(branch_name)
+
 
     def checkout(self, branch_name):
-        pass
+        """
+        str: branch_name
+        """
+        self.git.index.checkout(branch_name)
+
