@@ -161,9 +161,11 @@ class LocalTerraformModuleTemplateRepository(BaseTerraformModuleTemplateReposito
         return self.get(terraform_template_entity.name)
 
     def delete(self, name):
-        # TODO check if file exisis and only then delete
-        os.remove(os.path.join(self.templates_path, f'{name}.jinja2'))
-        return f"{name} has been deleted"
+        if os.path.exists(os.path.join(self.templates_path, f'{name}.jinja2')):
+            os.remove(os.path.join(self.templates_path, f'{name}.jinja2'))
+            return f"{name} has been deleted"
+        else:
+            return f"{name} has not been found"
 
     def __get_variables__(self, name):
         templates = os.listdir(self.templates_vars_path)
