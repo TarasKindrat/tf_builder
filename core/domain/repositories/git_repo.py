@@ -32,3 +32,6 @@ class BaseGitRepository(object):
 
     def checkout(self, branch_name):
         raise NotImplementedError
+
+    def rm(self, file):
+        raise NotImplementedError

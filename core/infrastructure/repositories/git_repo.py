@@ -40,10 +40,11 @@ class GitRepository(BaseGitRepository):
         """
         self.git.branch(branch_name)
 
-
     def checkout(self, branch_name):
         """
         str: branch_name
         """
         self.git.index.checkout(branch_name)
 
+    def rm(self, file):
+        self.git.index.remove([file])
