@@ -63,18 +63,18 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
             self.git.push()
         return self.get(terraform_template_entity.name)
 
-    def delete(self, terraform_template_entity):
+    def delete(self, name):
         with self.git:
-            template_path = os.path.join(self.templates_path, f'{terraform_template_entity.name}.jinja2')
-            template_vars_path = os.path.join(self.templates_vars_path, f'{terraform_template_entity.name}.json')
+            template_path = os.path.join(self.templates_path, f'{name}.jinja2')
+            template_vars_path = os.path.join(self.templates_vars_path, f'{name}.json')
             if not os.path.exists(template_path):
-                raise TemplateNotFoundException(terraform_template_entity.name)
+                raise TemplateNotFoundException(name)
             self.git.rm(template_path)
             self.git.commit(f'remove {template_path} from the git')
             self.git.rm(template_vars_path)
             self.git.commit(f'remove {template_vars_path} from the git')
             self.git.push()
-            return f"{terraform_template_entity.name} has been deleted"
+            return f"{name} has been deleted"
 
 
 class DatabaseTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository):
