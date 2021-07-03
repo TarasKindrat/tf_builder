@@ -3,11 +3,11 @@ import json
 
 from core.application.services.base import BaseService
 from core.domain.entities.terraform_module_template import TerraformModuleTemplateEntity
-from core.domain.repositories.terraform_module_template_repo import BaseTerraformModuleTemplateRepository
+from core.domain.repositories.terraform_module_template_repo import BaseTerraformTemplateRepository
 
 
-class TerraformModuleTemplateService(BaseService):
-    def __init__(self, repo: BaseTerraformModuleTemplateRepository):
+class TerraformTemplateService(BaseService):
+    def __init__(self, repo: BaseTerraformTemplateRepository):
         self.repo = repo
 
     def list(self):

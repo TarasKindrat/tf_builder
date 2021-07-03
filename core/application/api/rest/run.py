@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 from flask_restful import Api
 
 from core.application.api.base import BaseAPIRunner
-from core.application.api.rest.views.terraform_module_template_view import (
+from core.application.api.rest.views.terraform_template_view import (
     TerraformModuleTemplateView, TerraformModuleTemplatesView)
 from core.application.api.rest.views.terraform_module_view import TerraformModuleView
 from core.version import api_version

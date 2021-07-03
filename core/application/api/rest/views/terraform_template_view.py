@@ -2,11 +2,12 @@ from flask import jsonify, request
 from flask_restful import Resource
 
 from core.application.api.rest.helpers.response import make_api_response
-from core.application.services.terraform_module_template_service import TerraformModuleTemplateService
+from core.application.services.terraform_template_service import \
+    TerraformTemplateService
 
 
 class TerraformModuleTemplatesView(Resource):
-    def __init__(self, service: TerraformModuleTemplateService):
+    def __init__(self, service: TerraformTemplateService):
         self.service = service
 
     @make_api_response()
@@ -15,14 +16,18 @@ class TerraformModuleTemplatesView(Resource):
             "modules": self.service.list(),
         })
 
-    @make_api_response()
+    # @make_api_response()
     def post(self):
         params = request.get_json()
-        return self.service.create(params.get('name'), params.get('template'), params.get('variables'))
+        return self.service.create(
+            params.get('name'),
+            params.get('template'),
+            params.get('variables')
+        )
 
 
 class TerraformModuleTemplateView(Resource):
-    def __init__(self, service: TerraformModuleTemplateService):
+    def __init__(self, service: TerraformTemplateService):
         self.service = service
 
     @make_api_response()

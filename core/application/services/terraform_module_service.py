@@ -3,7 +3,7 @@ from jinja2 import BaseLoader, Environment
 from marshmallow import fields
 
 from core.application.services.base import BaseService
-from core.application.services.terraform_module_template_service import TerraformModuleTemplateService
+from core.application.services.terraform_template_service import TerraformTemplateService
 from core.domain.entities.base import BaseEntity
 from core.domain.entities.terraform_module import TerraformModuleEntity
 from core.domain.repositories.terraform_module_repo import BaseTerraformModuleRepository
@@ -11,7 +11,7 @@ from core.domain.repositories.terraform_module_repo import BaseTerraformModuleRe
 
 class TerraformModuleService(BaseService):
     def __init__(self, repo: BaseTerraformModuleRepository,
-                 terraform_template_service: TerraformModuleTemplateService):
+                 terraform_template_service: TerraformTemplateService):
         self.repo = repo
         self.terraform_template_service = terraform_template_service
 

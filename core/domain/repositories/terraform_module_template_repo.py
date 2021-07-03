@@ -3,7 +3,7 @@ from abc import abstractmethod
 from core.domain.entities.terraform_module_template import TerraformModuleTemplateEntity
 
 
-class BaseTerraformModuleTemplateRepository(object):
+class BaseTerraformTemplateRepository(object):
     @abstractmethod
     def list(self):
         """List available Terraform Modules templates
