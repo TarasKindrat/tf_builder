@@ -64,7 +64,17 @@ class GitTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository
         return self.get(terraform_template_entity.name)
 
     def delete(self, name):
-        pass
+        with self.git:
+            template_path = os.path.join(self.templates_path, f'{name}.jinja2')
+            template_vars_path = os.path.join(self.templates_vars_path, f'{name}.json')
+            if not os.path.exists(template_path):
+                raise TemplateNotFoundException(name)
+            self.git.rm(template_path)
+            self.git.commit(f'remove {template_path} from the git')
+            self.git.rm(template_vars_path)
+            self.git.commit(f'remove {template_vars_path} from the git')
+            self.git.push()
+            return f"{name} has been deleted"
 
 
 class DatabaseTerraformModuleTemplateRepository(BaseTerraformModuleTemplateRepository):
@@ -151,9 +161,11 @@ class LocalTerraformModuleTemplateRepository(BaseTerraformModuleTemplateReposito
         return self.get(terraform_template_entity.name)
 
     def delete(self, name):
-        #TODO check if file exisis and only then delete
-        os.remove(os.path.join(self.templates_path, f'{name}.jinja2'))
-        return f"{name} has been deleted"
+        if os.path.exists(os.path.join(self.templates_path, f'{name}.jinja2')):
+            os.remove(os.path.join(self.templates_path, f'{name}.jinja2'))
+            return f"{name} has been deleted"
+        else:
+            return f"{name} has not been found"
 
     def __get_variables__(self, name):
         templates = os.listdir(self.templates_vars_path)
