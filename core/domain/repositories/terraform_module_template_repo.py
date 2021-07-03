@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from core.domain.entities.terraform_module_template import TerraformModuleTemplateEntity
+from core.domain.entities.terraform_template import TerraformModuleTemplateEntity
 
 
 class BaseTerraformTemplateRepository(object):

@@ -8,7 +8,7 @@ from core.application.services.terraform_template_service import \
     TerraformTemplateService
 from core.infrastructure.repositories.terraform_module_repo import \
     LocalTerraformModuleRepository
-from core.infrastructure.repositories.terraform_module_template_repo import \
+from core.infrastructure.repositories.terraform_template_repo import \
     GitTerraformTemplateRepository
 from core.infrastructure.repositories.git_repo import GitRepository
 import os

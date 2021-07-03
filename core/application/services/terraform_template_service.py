@@ -2,7 +2,7 @@ import dataclasses
 import json
 
 from core.application.services.base import BaseService
-from core.domain.entities.terraform_module_template import TerraformModuleTemplateEntity
+from core.domain.entities.terraform_template import TerraformModuleTemplateEntity
 from core.domain.repositories.terraform_module_template_repo import BaseTerraformTemplateRepository
 
 

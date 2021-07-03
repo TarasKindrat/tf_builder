@@ -4,7 +4,7 @@ from contextlib import contextmanager
 
 from core.domain.entities.exception import (
     TemplateNotFoundException, TemplateAlreadyExistException)
-from core.domain.entities.terraform_module_template import (
+from core.domain.entities.terraform_template import (
     TerraformModuleTemplateEntity)
 from core.domain.repositories.terraform_module_template_repo import (
     BaseTerraformTemplateRepository)
@@ -46,7 +46,8 @@ class LocalTerraformTemplateRepository(BaseTerraformTemplateRepository):
         if os.path.exists(template_path):
             raise TemplateAlreadyExistException(terraform_template_entity.name)
         self.__write_file(template_path, terraform_template_entity.template)
-        self.__write_file(vars_path, terraform_template_entity.variables)
+        if terraform_template_entity.variables:
+            self.__write_file(vars_path, terraform_template_entity.variables)
         return self.get(terraform_template_entity.name)
 
     def update(self, terraform_template_entity):
@@ -56,7 +57,8 @@ class LocalTerraformTemplateRepository(BaseTerraformTemplateRepository):
         if not os.path.exists(template_path):
             raise TemplateNotFoundException(terraform_template_entity.name)
         self.__write_file(template_path, terraform_template_entity.template)
-        self.__write_file(vars_path, terraform_template_entity.variables)
+        if terraform_template_entity.variables:
+            self.__write_file(vars_path, terraform_template_entity.variables)
         return self.get(terraform_template_entity.name)
 
     def delete(self, name):
@@ -134,10 +136,10 @@ class GitTerraformTemplateRepository(LocalTerraformTemplateRepository):
         template_path = os.path.join(self.templates_path, f'{name}.jinja2')
         vars_path = os.path.join(self.templates_vars_path, f'{name}.json')
         yield
-        self.git.add(template_path)
-        self.git.add(vars_path)
-        self.git.commit(f'add {name} to the git')
-        self.git.push()
+        # self.git.add(template_path)
+        # self.git.add(vars_path)
+        # self.git.commit(f'add {name} to the git')
+        # self.git.push()
 
     def __delete_git_file(self, path):
         self.git.rm(path)

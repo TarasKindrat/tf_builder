@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+import jinja2schema
+
+from typing import Optional
 
 from marshmallow import fields, validate, Schema, post_load
 
@@ -40,7 +43,7 @@ class TerraformTemplateVariableEntityDataclass(Schema):
 class TerraformModuleTemplateEntityDataclass(Schema):
     name: str
     template: str
-    variables: TerraformTemplateVariableEntityDataclass
+    variables: Optional[TerraformTemplateVariableEntityDataclass]
 
 
 class TerraformTemplateVariableEntity(BaseEntity):
@@ -57,7 +60,7 @@ class TerraformModuleTemplateEntity(BaseEntity):
     variables = DictField(
         fields.Str(validate=validate.Regexp(r'^[a-zA-Z_]+$')),
         fields.Nested(TerraformTemplateVariableEntity),
-        default={}, missing={}
+        required=False, default={}, missing={}, allow_none=True
     )
 
     @post_load
