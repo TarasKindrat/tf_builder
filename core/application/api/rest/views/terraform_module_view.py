@@ -4,7 +4,8 @@ from flask import request, make_response
 from flask_restful import Resource
 
 from core.application.api.rest.helpers.response import make_api_response
-from core.application.services.terraform_module_service import TerraformModuleService
+from core.application.services.terraform_module_service import (
+    TerraformModuleService)
 
 
 class TerraformModuleView(Resource):

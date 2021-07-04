@@ -15,6 +15,7 @@ class BaseTerraformModuleRepository(object):
     def create(self, modules, terraform_template_service):
         """Create new terraform module
         :param modules: list  of dict
+        :param terraform_template_service: TerraformTemplateService
         :return: str
         """
         raise NotImplementedError

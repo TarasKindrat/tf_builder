@@ -18,10 +18,10 @@ from configparser import ConfigParser
 def get_config():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(dir_path, 'core', 'configs', 'main.ini')
-    creds_path = os.path.join(dir_path, 'core', 'credentials', 'main.ini')
+    credential_path = os.path.join(dir_path, 'core', 'credentials', 'main.ini')
     config = ConfigParser()
     config.read(config_path)
-    config.read(creds_path)
+    config.read(credential_path)
     return config
 
 
@@ -31,16 +31,18 @@ def run():
     url = git_config.get('repo_url')
     git_path = git_config.get("repo_path")
     git_user = git_config.get("username")
-    git_psswd = git_config.get("password")
+    git_password = git_config.get("password")
     project_name = url.split('/')[-1].split('.')[0]
-    templates_dir = 'static/'
+    template_dir = 'static/'
 
-    repo = GitRepository(f"{git_path}{project_name}", git_user, git_psswd, url)
-    tf_template_repository = GitTerraformTemplateRepository(repo, templates_dir)
+    repo = GitRepository(
+        f"{git_path}{project_name}", git_user, git_password, url)
+    tf_template_repository = GitTerraformTemplateRepository(repo, template_dir)
     template_service = TerraformTemplateService(tf_template_repository)
 
     tf_module_repository = LocalTerraformModuleRepository()
-    module_service = TerraformModuleService(tf_module_repository, template_service)
+    module_service = TerraformModuleService(
+        tf_module_repository, template_service)
 
     parser = ArgumentParser(description='Terraform builder')
     runners = {
@@ -48,7 +50,7 @@ def run():
         'rest': RestAPIRunner(template_service, module_service),
     }
 
-    parser.add_argument('command', help='Cli interface', choices=runners.keys())
+    parser.add_argument('command', choices=runners.keys())
     args = parser.parse_known_args()[0]
 
     runners.get(args.command).run()

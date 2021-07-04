@@ -56,7 +56,8 @@ class TFTemplateCreateExecutor(BaseExecutor):
 
     @staticmethod
     def execute(service, *args, **kwargs):
-        return service.create(kwargs.get('name'), kwargs.get('template'), json.loads(kwargs.get('vars')))
+        return service.create(kwargs.get('name'), kwargs.get('template'),
+                              json.loads(kwargs.get('vars')))
 
     @staticmethod
     def parser_name():

@@ -18,7 +18,7 @@ class VariablesValidationService(BaseService):
     class SimpleField(fields.Field):
         def __init__(self, types, *args, **kwargs):
             self.types = types
-            super(VariablesValidationService.SclarField, self).__init__(
+            super(VariablesValidationService.SimpleField, self).__init__(
                 *args, **kwargs)
 
         def _deserialize(self, value, attr, data, **kwargs):
@@ -27,12 +27,13 @@ class VariablesValidationService(BaseService):
             else:
                 raise ValidationError('Field should be str or list')
 
-    def init_simple(self, item, result, title, append_to_result=True):
+    @staticmethod
+    def init_simple(item, result, title, append_to_result=True):
         types = [i.get('type') for i in item.get('anyOf')]
         if not append_to_result:
             return VariablesValidationService.SimpleField(types, required=True)
-        result[title] = VariablesValidationService.SimpleField(types,
-                                                               required=True)
+        result[title] = VariablesValidationService.SimpleField(
+            types, required=True)
 
     def init_object(self, item, result, title, prefix):
         params = self.generate_vars_dataclass(item, nested=True, prefix=prefix)
@@ -43,12 +44,12 @@ class VariablesValidationService(BaseService):
         nested = item.get('items').get('type') == 'object'
         validation = validate.Length(min=1)
         obj = self.generate_vars_dataclass(
-            item.get('items'), resut_append=nested, prefix=prefix)
+            item.get('items'), result_append=nested, prefix=prefix)
         l_item = fields.Nested(obj, required=True) if nested else obj
         result[title] = fields.List(l_item, required=True, validate=validation)
 
     def generate_vars_dataclass(
-            self, template_vars, resut_append=True, nested=False, prefix=''):
+            self, template_vars, result_append=True, nested=False, prefix=''):
         result = {}
         items = (template_vars.get('properties').values()
                  if 'properties' in template_vars else [template_vars])
@@ -57,8 +58,9 @@ class VariablesValidationService(BaseService):
             item_type = item.get('type')
             prefix = prefix + title
             if item.get('anyOf'):
-                params = self.init_simple(item, result, title, resut_append)
-                if not resut_append:
+                params = VariablesValidationService.init_simple(
+                    item, result, title, result_append)
+                if not result_append:
                     return params
             elif item_type == 'object':
                 self.init_object(item, result, title, prefix)
@@ -82,16 +84,16 @@ class TerraformModuleService(BaseService):
             tf_module = TerraformModuleEntity().load(module)
             template = self.terraform_template_service.get(tf_module.name)
             variables = jinja2schema.infer(template)
-            vars = jinja2schema.to_json_schema(variables)
-            if vars.get('properties'):
+            variables = jinja2schema.to_json_schema(variables)
+            if variables.get('properties'):
                 if module.get('variables') is None:
                     raise VariablesValidationError(
                         f"variables param is not provided for "
                         f"'{tf_module.name}' module")
                 try:
                     vars_schema = (
-                        VariablesValidationService().generate_vars_dataclass(
-                            vars))
+                        VariablesValidationService()
+                        .generate_vars_dataclass(variables))
                     vars_schema().load(module.get('variables'))
                 except ValidationError as ex:
                     raise VariablesValidationError(

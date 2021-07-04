@@ -21,13 +21,12 @@ class CLIApiRunner(BaseAPIRunner):
                           for executor in EXECUTORS}
         subparsers = self.parser.add_subparsers()
 
-        tf_template_subparser = subparsers.add_parser(TF_TEMPLATE_PARSER)
-        tf_template_subparser.set_defaults(parser=TF_TEMPLATE_PARSER)
-        tf_template_subparsers = tf_template_subparser.add_subparsers()
+        tf_template_sub_parser = subparsers.add_parser(TF_TEMPLATE_PARSER)
+        tf_template_sub_parser.set_defaults(parser=TF_TEMPLATE_PARSER)
+        tf_template_subparsers = tf_template_sub_parser.add_subparsers()
 
-        tf_module_subparser = subparsers.add_parser(TF_MODULE_PARSER)
-        tf_module_subparser.set_defaults(parser=TF_MODULE_PARSER)
-        tf_module_subparsers = tf_module_subparser.add_subparsers()
+        tf_module_sub_parser = subparsers.add_parser(TF_MODULE_PARSER)
+        tf_module_sub_parser.set_defaults(parser=TF_MODULE_PARSER)
 
         for executor in EXECUTORS:
             executor(tf_template_subparsers.add_parser(
@@ -40,8 +39,8 @@ class CLIApiRunner(BaseAPIRunner):
         action = args.pop("which", "")
         if not action:
             if parser == TF_TEMPLATE_PARSER:
-                tf_template_subparser.print_help()
+                tf_template_sub_parser.print_help()
             if parser == TF_MODULE_PARSER:
-                tf_module_subparser.print_help()
+                tf_module_sub_parser.print_help()
             exit()
         print(executors_dict.get(action).execute(self.service, **args))

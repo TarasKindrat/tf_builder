@@ -24,10 +24,7 @@ class TerraformModuleTemplatesView(Resource):
         params = get_request_params(request)
         name = params.get("name")
         template = params.get("template", params.get("template_file"))
-        variables = params.get("variables", params.get("variables_file"))
-        if variables:
-            variables = variables if isinstance(variables, dict) else json.loads(variables)
-        return self.service.create(name, template, variables)
+        return self.service.create(name, template)
 
 
 class TerraformModuleTemplateView(Resource):
@@ -40,8 +37,8 @@ class TerraformModuleTemplateView(Resource):
 
     @make_api_response()
     def put(self, name):
-        return 'update'
+        return f'update {name}'
 
     @make_api_response()
     def delete(self, name):
-        return "delete"
+        return f"delete {name}"

@@ -72,8 +72,8 @@ class LocalTerraformTemplateRepository(BaseTerraformTemplateRepository):
 
 class GitTerraformTemplateRepository(LocalTerraformTemplateRepository):
 
-    def __init__(self, git_repository: BaseGitRepository, templates_path, *args,
-                 **kwargs):
+    def __init__(self, git_repository: BaseGitRepository, templates_path,
+                 *args, **kwargs):
         super(GitTerraformTemplateRepository, self).__init__(*args, **kwargs)
         self.git = git_repository
         self.templates_path = os.path.join(
@@ -88,12 +88,12 @@ class GitTerraformTemplateRepository(LocalTerraformTemplateRepository):
             return super(GitTerraformTemplateRepository, self).get(name)
 
     def create(self, terraform_template_entity):
-        with self.git_commited(terraform_template_entity.name):
+        with self.git_committed(terraform_template_entity.name):
             return super(GitTerraformTemplateRepository, self).create(
                 terraform_template_entity)
 
     def update(self, terraform_template_entity):
-        with self.git_commited(terraform_template_entity.name):
+        with self.git_committed(terraform_template_entity.name):
             return super(GitTerraformTemplateRepository, self).update(
                 terraform_template_entity)
 
@@ -106,7 +106,7 @@ class GitTerraformTemplateRepository(LocalTerraformTemplateRepository):
             return f"{name} has been deleted"
 
     @contextmanager
-    def git_commited(self, name):
+    def git_committed(self, name):
         template_path = os.path.join(self.templates_path, f'{name}.jinja2')
         yield
         self.git.add(template_path)
