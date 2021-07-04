@@ -22,10 +22,10 @@ class VariablesValidationService(BaseService):
                 *args, **kwargs)
 
         def _deserialize(self, value, attr, data, **kwargs):
-            if isinstance(value, str) or isinstance(value, list):
+            if isinstance(value, (str, int, float)):
                 return value
             else:
-                raise ValidationError('Field should be str or list')
+                raise ValidationError('Field should be string or numeric')
 
     @staticmethod
     def init_simple(item, result, title, append_to_result=True):
