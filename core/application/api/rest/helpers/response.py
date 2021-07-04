@@ -6,7 +6,7 @@ from flask import make_response
 from core.application.api.rest.helpers.exceptions import APIExceptionHandler
 
 
-def make_error_json_response(message: str, code: int):
+def make_error_response(message: str, code: int):
     """
     Generates error json
     Args:
@@ -30,7 +30,7 @@ def make_api_response(*args):
                 res = fn(*args, **kwargs)
             if error_catcher.error:
                 err_msg = error_catcher.error[0].format(error_catcher.error[3])
-                return make_error_json_response(err_msg, error_catcher.error[1])
+                return make_error_response(err_msg, error_catcher.error[1])
             else:
                 return res
         return wrapped_func

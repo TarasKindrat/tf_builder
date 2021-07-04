@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from core.domain.entities.terraform_template import TerraformModuleTemplateEntity
+from core.domain.entities.terraform_template import TerraformTemplateEntity
 
 
 class BaseTerraformTemplateRepository(object):
@@ -20,7 +20,7 @@ class BaseTerraformTemplateRepository(object):
         raise NotImplementedError
 
     @abstractmethod
-    def create(self, terraform_template_entity: TerraformModuleTemplateEntity):
+    def create(self, terraform_template_entity: TerraformTemplateEntity):
         """Create new terraform module template
         :param terraform_template_entity: TerraformModuleTemplateEntity
         :return: TerraformModuleTemplateEntity
@@ -28,7 +28,7 @@ class BaseTerraformTemplateRepository(object):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, terraform_template_entity: TerraformModuleTemplateEntity):
+    def update(self, terraform_template_entity: TerraformTemplateEntity):
         """Update existing terraform module template
         :param terraform_template_entity: TerraformModuleTemplateEntity
         :return: TerraformModuleTemplateEntity

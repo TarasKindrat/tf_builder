@@ -5,7 +5,7 @@ from contextlib import contextmanager
 from core.domain.entities.exception import (
     TemplateNotFoundException, TemplateAlreadyExistException)
 from core.domain.entities.terraform_template import (
-    TerraformModuleTemplateEntity)
+    TerraformTemplateEntity)
 from core.domain.repositories.terraform_template_repo import (
     BaseTerraformTemplateRepository)
 from core.domain.repositories.git_repo import BaseGitRepository
@@ -29,7 +29,7 @@ class LocalTerraformTemplateRepository(BaseTerraformTemplateRepository):
         else:
             file_path = os.path.join(self.templates_path, f'{name}.jinja2')
             template = LocalTerraformTemplateRepository.read_file(file_path)
-            return TerraformModuleTemplateEntity().load({
+            return TerraformTemplateEntity().load({
                 'name': name,
                 'template': template
             })

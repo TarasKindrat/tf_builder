@@ -31,7 +31,8 @@ class VariablesValidationService(BaseService):
         types = [i.get('type') for i in item.get('anyOf')]
         if not append_to_result:
             return VariablesValidationService.SimpleField(types, required=True)
-        result[title] = VariablesValidationService.SimpleField(types, required=True)
+        result[title] = VariablesValidationService.SimpleField(types,
+                                                               required=True)
 
     def init_object(self, item, result, title, prefix):
         params = self.generate_vars_dataclass(item, nested=True, prefix=prefix)
@@ -84,14 +85,17 @@ class TerraformModuleService(BaseService):
             vars = jinja2schema.to_json_schema(variables)
             if vars.get('properties'):
                 if module.get('variables') is None:
-                    raise VariablesValidationError(f"variables param is not provided for '{tf_module.name}' module")
+                    raise VariablesValidationError(
+                        f"variables param is not provided for "
+                        f"'{tf_module.name}' module")
                 try:
                     vars_schema = (
-                        VariablesValidationService()
-                            .generate_vars_dataclass(vars))
+                        VariablesValidationService().generate_vars_dataclass(
+                            vars))
                     vars_schema().load(module.get('variables'))
                 except ValidationError as ex:
-                    raise VariablesValidationError(f'module: {tf_module.name}', ex)
+                    raise VariablesValidationError(
+                        f'module: {tf_module.name}', ex)
 
         return self.repo.create(modules, self.terraform_template_service)
 

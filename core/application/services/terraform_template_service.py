@@ -3,8 +3,9 @@ import dataclasses
 import jinja2schema
 
 from core.application.services.base import BaseService
-from core.domain.entities.terraform_template import TerraformModuleTemplateEntity
-from core.domain.repositories.terraform_template_repo import BaseTerraformTemplateRepository
+from core.domain.entities.terraform_template import TerraformTemplateEntity
+from core.domain.repositories.terraform_template_repo import (
+    BaseTerraformTemplateRepository)
 
 
 class TerraformTemplateService(BaseService):
@@ -21,7 +22,7 @@ class TerraformTemplateService(BaseService):
         return template
 
     def create(self, name, template):
-        terraform_template_entity = TerraformModuleTemplateEntity().load({
+        terraform_template_entity = TerraformTemplateEntity().load({
             "name": name,
             "template": template
         })
@@ -31,7 +32,7 @@ class TerraformTemplateService(BaseService):
         return self.repo.delete(name)
 
     def update(self, name, template):
-        terraform_template_entity = TerraformModuleTemplateEntity().load({
+        terraform_template_entity = TerraformTemplateEntity().load({
             "name": name,
             "template": template
         })

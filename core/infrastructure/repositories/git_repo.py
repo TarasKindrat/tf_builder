@@ -8,8 +8,9 @@ class GitRepository(BaseGitRepository):
 
     def __init__(self, repo_path, user_name, password, repo_url=None):
         super(GitRepository, self).__init__(repo_path, user_name, password)
-        self.git = self.__clone__(repo_url, repo_path, user_name, password) \
-            if not os.path.exists(repo_path) and repo_url else self.__init_repo__(repo_path)
+        self.git = (self.__clone__(repo_url, repo_path, user_name, password)
+                    if not os.path.exists(repo_path) and repo_url
+                    else self.__init_repo__(repo_path))
 
     @staticmethod
     def __clone__(repo_url, repo_path, user_name, password):

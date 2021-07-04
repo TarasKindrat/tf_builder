@@ -10,7 +10,7 @@ class TerraformModuleTemplateEntityDataclass(Schema):
     template: str
 
 
-class TerraformModuleTemplateEntity(BaseEntity):
+class TerraformTemplateEntity(BaseEntity):
     """Core Terraform Module Template Entity"""
     name = fields.String(required=True)
     template = fields.String(required=True)
