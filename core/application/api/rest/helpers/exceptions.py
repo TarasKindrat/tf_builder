@@ -6,6 +6,8 @@ from typing import Dict, Tuple, Optional, Any
 import marshmallow
 
 from core.application.api.rest.helpers.request import FileExtensionException
+from core.application.services.terraform_module_service import \
+    VariablesValidationError
 from core.domain.entities.exception import TemplateNotFoundException, TemplateAlreadyExistException
 
 API_ERRORS_DICT = {
@@ -13,6 +15,7 @@ API_ERRORS_DICT = {
     TemplateNotFoundException: ("Template {} has not been found", HTTPStatus.NOT_FOUND),
     TemplateAlreadyExistException: ("Template {} already exists", HTTPStatus.BAD_REQUEST),
     FileExtensionException: ("File extension {} is forbidden", HTTPStatus.BAD_REQUEST),
+    VariablesValidationError: ("Variables validation error: {}", HTTPStatus.BAD_REQUEST),
 }
 
 

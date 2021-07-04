@@ -6,7 +6,7 @@ from core.domain.entities.exception import (
     TemplateNotFoundException, TemplateAlreadyExistException)
 from core.domain.entities.terraform_template import (
     TerraformModuleTemplateEntity)
-from core.domain.repositories.terraform_module_template_repo import (
+from core.domain.repositories.terraform_template_repo import (
     BaseTerraformTemplateRepository)
 from core.domain.repositories.git_repo import BaseGitRepository
 
@@ -18,9 +18,6 @@ class LocalTerraformTemplateRepository(BaseTerraformTemplateRepository):
         self.templates_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)), os.path.pardir,
             os.path.pardir, 'static/templates')
-        self.templates_vars_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), os.path.pardir,
-            os.path.pardir, 'static/templates_vars')
 
     def list(self):
         templates = os.listdir(self.templates_path)
@@ -32,33 +29,25 @@ class LocalTerraformTemplateRepository(BaseTerraformTemplateRepository):
         else:
             file_path = os.path.join(self.templates_path, f'{name}.jinja2')
             template = LocalTerraformTemplateRepository.read_file(file_path)
-            variables = self.__get_variables__(name)
             return TerraformModuleTemplateEntity().load({
                 'name': name,
-                'template': template,
-                'variables': variables
+                'template': template
             })
 
     def create(self, terraform_template_entity):
         name = terraform_template_entity.name
         template_path = os.path.join(self.templates_path, f'{name}.jinja2')
-        vars_path = os.path.join(self.templates_vars_path, f'{name}.json')
         if os.path.exists(template_path):
             raise TemplateAlreadyExistException(terraform_template_entity.name)
         self.__write_file(template_path, terraform_template_entity.template)
-        if terraform_template_entity.variables:
-            self.__write_file(vars_path, terraform_template_entity.variables)
         return self.get(terraform_template_entity.name)
 
     def update(self, terraform_template_entity):
         name = terraform_template_entity.name
         template_path = os.path.join(self.templates_path, f'{name}.jinja2')
-        vars_path = os.path.join(self.templates_vars_path, f'{name}.json')
         if not os.path.exists(template_path):
             raise TemplateNotFoundException(terraform_template_entity.name)
         self.__write_file(template_path, terraform_template_entity.template)
-        if terraform_template_entity.variables:
-            self.__write_file(vars_path, terraform_template_entity.variables)
         return self.get(terraform_template_entity.name)
 
     def delete(self, name):
@@ -67,16 +56,6 @@ class LocalTerraformTemplateRepository(BaseTerraformTemplateRepository):
             return f"{name} has been deleted"
         else:
             raise TemplateNotFoundException(name)
-
-    def __get_variables__(self, name):
-        templates = os.listdir(self.templates_vars_path)
-        if name not in [template.split('.')[0] for template in templates]:
-            return {}
-        else:
-            vars_file_path = os.path.join(
-                self.templates_vars_path, f'{name}.json')
-            return json.loads(LocalTerraformTemplateRepository.read_file(
-                vars_file_path))
 
     def __write_file(self, path, content):
         content = (json.dumps(content)
@@ -99,8 +78,6 @@ class GitTerraformTemplateRepository(LocalTerraformTemplateRepository):
         self.git = git_repository
         self.templates_path = os.path.join(
             self.git.local_repo_path, templates_path, 'templates')
-        self.templates_vars_path = os.path.join(
-            self.git.local_repo_path, templates_path, 'templates_vars')
 
     def list(self):
         with self.git:
@@ -123,23 +100,18 @@ class GitTerraformTemplateRepository(LocalTerraformTemplateRepository):
     def delete(self, name):
         with self.git:
             template_path = os.path.join(self.templates_path, f'{name}.jinja2')
-            template_vars_path = os.path.join(self.templates_vars_path,
-                                              f'{name}.json')
             if not os.path.exists(template_path):
                 raise TemplateNotFoundException(name)
             self.__delete_git_file(template_path)
-            self.__delete_git_file(template_vars_path)
             return f"{name} has been deleted"
 
     @contextmanager
     def git_commited(self, name):
         template_path = os.path.join(self.templates_path, f'{name}.jinja2')
-        vars_path = os.path.join(self.templates_vars_path, f'{name}.json')
         yield
-        # self.git.add(template_path)
-        # self.git.add(vars_path)
-        # self.git.commit(f'add {name} to the git')
-        # self.git.push()
+        self.git.add(template_path)
+        self.git.commit(f'add {name} to the git')
+        self.git.push()
 
     def __delete_git_file(self, path):
         self.git.rm(path)
