@@ -3,7 +3,7 @@ from functools import wraps
 
 from flask import make_response
 
-from core.application.api.rest.helpers.exceptions import APIExceptionHandler
+from core.application.helpers.exceptions import APIExceptionHandler
 
 
 def make_error_response(message: str, code: int):

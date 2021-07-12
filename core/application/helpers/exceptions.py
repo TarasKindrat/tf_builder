@@ -4,7 +4,7 @@ from typing import Tuple, Optional, Any
 
 import marshmallow
 
-from core.application.api.rest.helpers.request import FileExtensionException
+from core.application.helpers.request import FileExtensionException
 from core.application.services.terraform_module_service import (
     VariablesValidationError)
 from core.domain.entities.exception import (

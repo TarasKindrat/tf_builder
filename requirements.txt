@@ -6,3 +6,4 @@ flask-restful
 GitPython
 jinja2schema
 jinja2
+pyyaml

@@ -1,7 +1,6 @@
-from argparse import ArgumentParser
-
-from core.application.api.cli.run import CLIApiRunner
-from core.application.api.rest.run import RestAPIRunner
+from core.application.controllers.terraform_module import TerraformModule
+from core.application.controllers.terraform_template import TerraformTemplate
+from core.application.run import FlaskRunner
 from core.application.services.terraform_module_service import \
     TerraformModuleService
 from core.application.services.terraform_template_service import \
@@ -13,6 +12,8 @@ from core.infrastructure.repositories.terraform_template_repo import \
 from core.infrastructure.repositories.git_repo import GitRepository
 import os
 from configparser import ConfigParser
+
+from core.plugins import Plugin
 
 
 def get_config():
@@ -39,22 +40,16 @@ def run():
         f"{git_path}{project_name}", git_user, git_password, url)
     tf_template_repository = GitTerraformTemplateRepository(repo, template_dir)
     template_service = TerraformTemplateService(tf_template_repository)
+    template_controller = TerraformTemplate(template_service)
 
     tf_module_repository = LocalTerraformModuleRepository()
     module_service = TerraformModuleService(
         tf_module_repository, template_service)
+    module_controller = TerraformModule(module_service)
 
-    parser = ArgumentParser(description='Terraform builder')
-    runners = {
-        'cli': CLIApiRunner(parser, template_service, module_service),
-        'rest': RestAPIRunner(template_service, module_service),
-    }
-
-    parser.add_argument('command', choices=runners.keys())
-    args = parser.parse_known_args()[0]
-
-    runners.get(args.command).run()
+    FlaskRunner(template_controller, module_controller).run()
 
 
 if __name__ == '__main__':
+    Plugin.load_plugins('plugins')
     run()
